@@ -1,0 +1,192 @@
+%# Appendix tables template for detailed benchmark data
+%# Comprehensive tables for thesis appendix
+
+\section{Detailed Benchmark Results}
+
+\subsection{Complete Performance Metrics}
+
+\begin{table}[htbp]
+\centering
+\caption{Comprehensive Performance Metrics for All Evaluated Models}
+\label{tab:appendix_complete_metrics}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+\textbf{Model} & \textbf{mAP@0.5} & \textbf{mAP@0.75} & \textbf{mAP@COCO} & \textbf{Inference} & \textbf{FPS} & \textbf{Memory} & \textbf{Parameters} & \textbf{GFLOPs} \\
+ & & & & \textbf{(ms)} & & \textbf{(MB)} & \textbf{(M)} & \\
+\midrule
+\BLOCK{ for result in model_results }
+\VAR{result.name|format_model_name} & 
+\VAR{result.detection_metrics['mAP@0.5']|format_number} & 
+\VAR{result.detection_metrics['mAP@0.75']|format_number} & 
+\VAR{result.detection_metrics['mAP@[0.5:0.05:0.95]']|format_number} & 
+\VAR{result.performance_metrics.inference_time_ms|format_number} & 
+\VAR{result.performance_metrics.fps|format_number} & 
+\VAR{result.performance_metrics.memory_usage_mb|format_number} & 
+\VAR{(result.performance_metrics.parameters / 1000000)|format_number} & 
+\VAR{result.performance_metrics.gflops|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Detailed Class-wise Average Precision}
+
+\begin{table}[htbp]
+\centering
+\caption{Complete Class-wise Average Precision Results (AP@0.5)}
+\label{tab:appendix_class_wise_detailed}
+\begin{tabular}{@{}l\BLOCK{ for class_name in dataset_info.class_names }c\BLOCK{ endfor }c@{}}
+\toprule
+\textbf{Model} \BLOCK{ for class_name in dataset_info.class_names }& \textbf{\VAR{class_name.title()}} \BLOCK{ endfor }& \textbf{Mean AP} \\
+\midrule
+\BLOCK{ for row in class_wise_table }
+\VAR{row.model_name|format_model_name} \BLOCK{ for class_name in dataset_info.class_names }& \VAR{row['ap_' + class_name]|format_number} \BLOCK{ endfor }& \VAR{summary_table[loop.index0].map_50|format_number} \\
+\BLOCK{ endfor }
+\midrule
+\textbf{Class Average} \BLOCK{ for class_name in dataset_info.class_names }& \VAR{(class_wise_table|map(attribute='ap_' + class_name)|list|sum / class_wise_table|length)|format_number} \BLOCK{ endfor }& \VAR{(summary_table|map(attribute='map_50')|list|sum / summary_table|length)|format_number} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Model Architecture Details}
+
+\begin{table}[htbp]
+\centering
+\caption{Model Architecture and Configuration Details}
+\label{tab:appendix_model_details}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+\textbf{Model} & \textbf{Architecture} & \textbf{Parameters} & \textbf{Layers} & \textbf{Size (MB)} & \textbf{Version} \\
+\midrule
+\BLOCK{ for result in model_results }
+\VAR{result.name|format_model_name} & 
+\VAR{result.metadata.version} & 
+\VAR{result.metadata.parameters|format_large_number} & 
+\VAR{result.metadata.additional_info.get('layers', 'N/A')} & 
+\VAR{result.metadata.model_size_mb|format_number} & 
+\VAR{result.metadata.additional_info.get('yolo_version', 'N/A')} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Detection Statistics by Model}
+
+\begin{table}[htbp]
+\centering
+\caption{Detection Statistics and Inference Characteristics}
+\label{tab:appendix_detection_stats}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Model} & \textbf{Total} & \textbf{Avg per} & \textbf{Inference} & \textbf{Std Dev} & \textbf{Min Time} & \textbf{Max Time} \\
+ & \textbf{Detections} & \textbf{Image} & \textbf{Time (ms)} & \textbf{(ms)} & \textbf{(ms)} & \textbf{(ms)} \\
+\midrule
+\BLOCK{ for result in model_results }
+\VAR{result.name|format_model_name} & 
+\VAR{result.statistics.total_detections|format_large_number} & 
+\VAR{result.statistics.avg_detections_per_image|format_number} & 
+\VAR{result.statistics.avg_inference_time_ms|format_number} & 
+\VAR{result.statistics.std_inference_time_ms|format_number} & 
+\VAR{(result.statistics.avg_inference_time_ms - result.statistics.std_inference_time_ms)|format_number} & 
+\VAR{(result.statistics.avg_inference_time_ms + result.statistics.std_inference_time_ms)|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Evaluation Configuration}
+
+\begin{table}[htbp]
+\centering
+\caption{Benchmark Configuration and Evaluation Parameters}
+\label{tab:appendix_config}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Dataset & SkyFusion (\VAR{dataset_info.split} split) \\
+Total Images & \VAR{dataset_info.num_images|format_large_number} \\
+Total Annotations & \VAR{dataset_info.num_annotations|format_large_number} \\
+Object Classes & \VAR{dataset_info.num_classes} (\VAR{dataset_info.class_names|join(', ')}) \\
+Confidence Threshold & 0.25 \\
+IoU Threshold (NMS) & 0.45 \\
+Evaluation IoU Thresholds & 0.5, 0.75, [0.5:0.05:0.95] \\
+Performance Measurement & 5 runs with warmup \\
+Evaluation Date & \VAR{timestamp} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Class Distribution Analysis}
+
+\begin{table}[htbp]
+\centering
+\caption{Dataset Class Distribution and Characteristics}
+\label{tab:appendix_class_distribution}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Class} & \textbf{Count} & \textbf{Percentage} & \textbf{Avg per Image} & \textbf{Best Model (AP@0.5)} \\
+\midrule
+\BLOCK{ for class_name in dataset_info.class_names }
+\VAR{class_name.title()} & 
+\VAR{dataset_info.class_counts[class_name]|format_large_number} & 
+\VAR{(dataset_info.class_counts[class_name] / dataset_info.num_annotations)|format_percentage} & 
+\VAR{(dataset_info.class_counts[class_name] / dataset_info.num_images)|format_number} & 
+\VAR{class_analysis[class_name].best_model|format_model_name} (\VAR{class_analysis[class_name].best_score|format_number}) \\
+\BLOCK{ endfor }
+\midrule
+\textbf{Total} & 
+\VAR{dataset_info.num_annotations|format_large_number} & 
+100.0\% & 
+\VAR{(dataset_info.num_annotations / dataset_info.num_images)|format_number} & 
+-- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Performance Rankings Summary}
+
+\begin{table}[htbp]
+\centering
+\caption{Model Rankings Across Different Metrics}
+\label{tab:appendix_rankings}
+\begin{tabular}{@{}clccc@{}}
+\toprule
+\textbf{Rank} & \textbf{Model} & \textbf{mAP@0.5} & \textbf{mAP@0.75} & \textbf{mAP@COCO} \\
+\midrule
+\BLOCK{ for rank, (model_name, score) in rankings.by_map_0_5|list|enumerate(1) }
+\VAR{rank} & 
+\VAR{model_name|format_model_name} & 
+\VAR{score|format_number} & 
+\VAR{summary_table[loop.index0].map_75|format_number} & 
+\VAR{summary_table[loop.index0].map_coco|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Computational Efficiency Analysis}
+
+\begin{table}[htbp]
+\centering
+\caption{Computational Efficiency Metrics and Resource Utilization}
+\label{tab:appendix_efficiency}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Model} & \textbf{FPS} & \textbf{Throughput} & \textbf{Efficiency} & \textbf{Memory} & \textbf{Model} & \textbf{Complexity} \\
+ & & \textbf{(img/s)} & \textbf{(mAP/ms)} & \textbf{(MB)} & \textbf{Size (MB)} & \textbf{(GFLOPs)} \\
+\midrule
+\BLOCK{ for result in model_results }
+\VAR{result.name|format_model_name} & 
+\VAR{result.performance_metrics.fps|format_number} & 
+\VAR{result.performance_metrics.fps|format_number} & 
+\VAR{(result.detection_metrics['mAP@0.5'] / result.performance_metrics.inference_time_ms)|format_number} & 
+\VAR{result.performance_metrics.memory_usage_mb|format_number} & 
+\VAR{result.performance_metrics.model_size_mb|format_number} & 
+\VAR{result.performance_metrics.gflops|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table} 

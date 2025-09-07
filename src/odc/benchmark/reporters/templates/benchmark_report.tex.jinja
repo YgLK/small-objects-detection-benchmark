@@ -1,0 +1,387 @@
+%# Main benchmark report template for thesis integration
+%# This template generates a comprehensive LaTeX report of object detection benchmark results
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Page geometry
+\geometry{margin=2.5cm}
+
+% Table formatting
+\renewcommand{\arraystretch}{1.2}
+
+% Colors for highlighting
+\definecolor{bestperformance}{RGB}{0,128,0}
+\definecolor{worstperformance}{RGB}{128,0,0}
+
+\title{Object Detection Model Benchmark Report\\SkyFusion Dataset Evaluation}
+\author{Benchmark System v0.1.0}
+\date{\VAR{generation_time}}
+
+\begin{document}
+
+\maketitle
+
+\section{Executive Summary}
+
+This report presents a comprehensive evaluation of \VAR{model_results|length} object detection models on the SkyFusion dataset. The benchmark was conducted on \VAR{timestamp} using \VAR{dataset_info.num_images} images from the \VAR{dataset_info.split} split, containing \VAR{dataset_info.num_annotations} annotations across \VAR{dataset_info.num_classes} classes: \VAR{dataset_info.class_names|join(', ')}.
+
+\subsection{Key Findings}
+
+\begin{itemize}
+    \item \textbf{Best Overall Performance:} \VAR{best_performer.model|format_model_name} achieved the highest mAP@0.5 of \VAR{best_performer.map_0_5|format_number}
+    \item \textbf{Dataset Characteristics:} \VAR{dataset_info.class_counts.vehicle} vehicles, \VAR{dataset_info.class_counts.get('ship', 0)} ships, and \VAR{dataset_info.class_counts.get('aircraft', 0)} aircraft annotations
+    \item \textbf{Performance Range:} mAP@0.5 scores range from \VAR{rankings.by_map_0_5[-1][1]|format_number} to \VAR{rankings.by_map_0_5[0][1]|format_number}
+\end{itemize}
+
+\section{Dataset Information}
+
+\begin{table}[H]
+\centering
+\caption{SkyFusion Dataset Statistics}
+\label{tab:dataset_stats}
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Dataset Split & \VAR{dataset_info.split} \\
+Total Images & \VAR{dataset_info.num_images|format_large_number} \\
+Total Annotations & \VAR{dataset_info.num_annotations|format_large_number} \\
+Number of Classes & \VAR{dataset_info.num_classes} \\
+Average Objects per Image & \VAR{(dataset_info.num_annotations / dataset_info.num_images)|format_number} \\
+\midrule
+\multicolumn{2}{c}{\textbf{Class Distribution}} \\
+\midrule
+\BLOCK{ for class_name, count in dataset_info.class_counts.items() }
+\VAR{class_name.title()} & \VAR{count|format_large_number} (\VAR{(count / dataset_info.num_annotations)|format_percentage}) \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Performance Visualizations}
+
+\BLOCK{ if plot_paths is defined and plot_paths }
+This section presents visual analysis of the benchmark results through comprehensive charts and plots.
+
+\subsection{Model Performance Comparison}
+
+\BLOCK{ if 'performance_comparison' in plot_paths }
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{\VAR{plot_paths.performance_comparison}}
+\caption{Overall model performance comparison showing mAP@0.5, mAP@0.75, and mAP@COCO scores across all evaluated models.}
+\label{fig:performance_comparison}
+\end{figure}
+\BLOCK{ endif }
+
+\BLOCK{ if 'map_comparison' in plot_paths }
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{\VAR{plot_paths.map_comparison}}
+\caption{Mean Average Precision comparison across different IoU thresholds, demonstrating model performance sensitivity to detection precision requirements.}
+\label{fig:map_comparison}
+\end{figure}
+\BLOCK{ endif }
+
+\subsection{Class-wise Performance Analysis}
+
+\BLOCK{ if 'class_performance_heatmap' in plot_paths }
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{\VAR{plot_paths.class_performance_heatmap}}
+\caption{Class-wise performance heatmap showing Average Precision at IoU=0.5 for each model-class combination. Darker colors indicate higher performance.}
+\label{fig:class_heatmap}
+\end{figure}
+\BLOCK{ endif }
+
+\subsection{Speed vs Accuracy Trade-offs}
+
+\BLOCK{ if 'speed_accuracy_tradeoff' in plot_paths }
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{\VAR{plot_paths.speed_accuracy_tradeoff}}
+\caption{Speed vs accuracy trade-off analysis showing the relationship between inference speed (FPS) and detection accuracy (mAP@0.5). Points closer to the top-right represent optimal models.}
+\label{fig:speed_accuracy}
+\end{figure}
+\BLOCK{ endif }
+
+\subsection{Model Complexity Analysis}
+
+\BLOCK{ if 'model_complexity' in plot_paths }
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{\VAR{plot_paths.model_complexity}}
+\caption{Model complexity analysis showing the relationship between model parameters, inference speed, and accuracy. Bubble size represents model size in MB.}
+\label{fig:model_complexity}
+\end{figure}
+\BLOCK{ endif }
+
+\BLOCK{ if 'radar_comparison' in plot_paths }
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{\VAR{plot_paths.radar_comparison}}
+\caption{Multi-dimensional radar chart comparing models across key metrics: accuracy, speed, efficiency, and class-specific performance.}
+\label{fig:radar_comparison}
+\end{figure}
+\BLOCK{ endif }
+
+\BLOCK{ endif }
+
+\section{Sample Detection Results}
+
+\BLOCK{ if visualization_paths is defined and visualization_paths }
+This section showcases sample detection results from the best performing model to illustrate the quality and characteristics of the predictions.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.45\textwidth}
+\includegraphics[width=\textwidth]{\VAR{visualization_paths[0]}}
+\caption{Sample 1: Multi-class detection}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.45\textwidth}
+\includegraphics[width=\textwidth]{\VAR{visualization_paths[1]}}
+\caption{Sample 2: Dense object scene}
+\end{subfigure}
+
+\BLOCK{ if visualization_paths|length > 2 }
+\begin{subfigure}{0.45\textwidth}
+\includegraphics[width=\textwidth]{\VAR{visualization_paths[2]}}
+\caption{Sample 3: Challenging conditions}
+\end{subfigure}
+\hfill
+\BLOCK{ if visualization_paths|length > 3 }
+\begin{subfigure}{0.45\textwidth}
+\includegraphics[width=\textwidth]{\VAR{visualization_paths[3]}}
+\caption{Sample 4: Scale variation}
+\end{subfigure}
+\BLOCK{ endif }
+\BLOCK{ endif }
+
+\caption{Sample detection results from \VAR{best_performer.model|format_model_name} showing ground truth (yellow) and predicted (colored by class) bounding boxes. Red: Aircraft, Green: Ship, Blue: Vehicle.}
+\label{fig:sample_detections}
+\end{figure}
+
+\BLOCK{ endif }
+
+\section{Model Performance Summary}
+
+\subsection{Overall Performance Comparison}
+
+\begin{table}[H]
+\centering
+\caption{Model Performance Summary}
+\label{tab:model_summary}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Model} & \textbf{mAP@0.5} & \textbf{mAP@0.75} & \textbf{mAP@COCO} & \textbf{Inference} & \textbf{FPS} & \textbf{Parameters} & \textbf{Size} \\
+ & & & & \textbf{(ms)} & & \textbf{(M)} & \textbf{(MB)} \\
+\midrule
+\BLOCK{ for row in summary_table }
+\VAR{row.model_name|format_model_name} & 
+\VAR{row.map_50|format_number} & 
+\VAR{row.map_75|format_number} & 
+\VAR{row.map_coco|format_number} & 
+\VAR{row.inference_time|format_number} & 
+\VAR{row.fps|format_number} & 
+\VAR{(row.parameters / 1000000)|format_number} & 
+\VAR{row.model_size|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Model Rankings}
+
+\begin{table}[H]
+\centering
+\caption{Model Rankings by mAP@0.5}
+\label{tab:model_rankings}
+\begin{tabular}{clc}
+\toprule
+\textbf{Rank} & \textbf{Model} & \textbf{mAP@0.5} \\
+\midrule
+\BLOCK{ for rank, (model_name, score) in rankings.by_map_0_5|list|enumerate(1) }
+\VAR{rank} & \VAR{model_name|format_model_name} & \VAR{score|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Class-wise Performance Analysis}
+
+\subsection{Per-Class Average Precision}
+
+\begin{table}[H]
+\centering
+\caption{Class-wise Average Precision at IoU=0.5}
+\label{tab:class_wise_ap}
+\begin{tabular}{l\BLOCK{ for class_name in dataset_info.class_names }c\BLOCK{ endfor }}
+\toprule
+\textbf{Model} \BLOCK{ for class_name in dataset_info.class_names }& \textbf{\VAR{class_name.title()}} \BLOCK{ endfor }\\
+\midrule
+\BLOCK{ for row in class_wise_table }
+\VAR{row.model_name|format_model_name} \BLOCK{ for class_name in dataset_info.class_names }& \VAR{row['ap_' + class_name]|format_number} \BLOCK{ endfor }\\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Class-wise Best Performers}
+
+\begin{table}[H]
+\centering
+\caption{Best Performing Models per Class}
+\label{tab:class_best_performers}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Class} & \textbf{Best Model} & \textbf{AP@0.5} \\
+\midrule
+\BLOCK{ for class_name, analysis in class_analysis.items() }
+\VAR{class_name.title()} & \VAR{analysis.best_model|format_model_name} & \VAR{analysis.best_score|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Performance Characteristics}
+
+\subsection{Computational Performance}
+
+\begin{table}[H]
+\centering
+\caption{Computational Performance Metrics}
+\label{tab:performance_metrics}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model} & \textbf{Parameters} & \textbf{Model Size} & \textbf{GFLOPs} & \textbf{Inference Time} & \textbf{FPS} & \textbf{Memory} \\
+ & \textbf{(M)} & \textbf{(MB)} & & \textbf{(ms)} & & \textbf{(MB)} \\
+\midrule
+\BLOCK{ for row in performance_table }
+\VAR{row.model_name|format_model_name} & 
+\VAR{(row.parameters / 1000000)|format_number} & 
+\VAR{row.model_size_mb|format_number} & 
+\VAR{row.gflops|format_number} & 
+\VAR{row.inference_time_ms|format_number} & 
+\VAR{row.fps|format_number} & 
+\VAR{row.memory_usage_mb|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\section{Detailed Model Analysis}
+
+\BLOCK{ for result in model_results }
+\subsection{\VAR{result.name|format_model_name}}
+
+\textbf{Model Architecture:} \VAR{result.metadata.version} with \VAR{result.metadata.parameters|format_large_number} parameters (\VAR{result.metadata.model_size_mb|format_number} MB)
+
+\textbf{Detection Performance:}
+\begin{itemize}
+    \item mAP@0.5: \VAR{result.detection_metrics['mAP@0.5']|format_number}
+    \item mAP@0.75: \VAR{result.detection_metrics['mAP@0.75']|format_number}
+    \item mAP@[0.5:0.05:0.95]: \VAR{result.detection_metrics['mAP@[0.5:0.05:0.95]']|format_number}
+\end{itemize}
+
+\textbf{Per-Class Performance:}
+\begin{itemize}
+\BLOCK{ for class_name in dataset_info.class_names }
+    \item \VAR{class_name.title()}: AP@0.5 = \VAR{result.detection_metrics['AP@0.5_' + class_name]|format_number}
+\BLOCK{ endfor }
+\end{itemize}
+
+\textbf{Computational Efficiency:}
+\begin{itemize}
+    \item Inference Time: \VAR{result.performance_metrics.inference_time_ms|format_number} ms
+    \item Throughput: \VAR{result.performance_metrics.fps|format_number} FPS
+    \item Memory Usage: \VAR{result.performance_metrics.memory_usage_mb|format_number} MB
+    \item Model Complexity: \VAR{result.performance_metrics.gflops|format_number} GFLOPs
+\end{itemize}
+
+\textbf{Detection Statistics:}
+\begin{itemize}
+    \item Total Detections: \VAR{result.statistics.total_detections|format_large_number}
+    \item Average Detections per Image: \VAR{result.statistics.avg_detections_per_image|format_number}
+    \item Inference Time Std: \VAR{result.statistics.std_inference_time_ms|format_number} ms
+\end{itemize}
+
+\BLOCK{ endfor }
+
+\section{Comparative Analysis}
+
+\subsection{Performance Trade-offs}
+
+The benchmark reveals several key trade-offs between detection accuracy and computational efficiency:
+
+\begin{itemize}
+    \item \textbf{Accuracy Leader:} \VAR{best_performer.model|format_model_name} achieves the highest mAP@0.5 of \VAR{best_performer.map_0_5|format_number}
+    \item \textbf{Speed vs. Accuracy:} Models show varying trade-offs between inference speed and detection accuracy
+    \item \textbf{Class-specific Performance:} Different models excel at different object classes, indicating potential for ensemble approaches
+\end{itemize}
+
+\subsection{Recommendations}
+
+Based on the benchmark results:
+
+\begin{enumerate}
+    \item For \textbf{highest accuracy}: Use \VAR{best_performer.model|format_model_name}
+    \item For \textbf{real-time applications}: Consider models with >20 FPS while maintaining acceptable accuracy
+    \item For \textbf{class-specific tasks}: 
+    \begin{itemize}
+    \BLOCK{ for class_name, analysis in class_analysis.items() }
+        \item \VAR{class_name.title()} detection: \VAR{analysis.best_model|format_model_name} (AP@0.5 = \VAR{analysis.best_score|format_number})
+    \BLOCK{ endfor }
+    \end{itemize}
+\end{enumerate}
+
+\section{Methodology}
+
+\subsection{Evaluation Protocol}
+
+\begin{itemize}
+    \item \textbf{Dataset:} SkyFusion dataset, \VAR{dataset_info.split} split
+    \item \textbf{Metrics:} COCO-style evaluation with IoU thresholds from 0.5 to 0.95
+    \item \textbf{Performance:} Measured on \VAR{dataset_info.num_images} images with \VAR{dataset_info.num_annotations} annotations
+    \item \textbf{Hardware:} Inference timing measured with model warmup
+\end{itemize}
+
+\subsection{Benchmark Configuration}
+
+\begin{itemize}
+    \item Confidence Threshold: 0.25
+    \item IoU Threshold (NMS): 0.45
+    \item Evaluation IoU Thresholds: 0.5, 0.75, [0.5:0.05:0.95]
+    \item Performance Runs: Multiple iterations with averaging
+\end{itemize}
+
+\section{Conclusion}
+
+This comprehensive benchmark of \VAR{model_results|length} object detection models on the SkyFusion dataset provides valuable insights for model selection and deployment decisions. The results demonstrate the importance of considering both accuracy and computational efficiency when choosing models for specific applications.
+
+The \VAR{best_performer.model|format_model_name} model emerges as the top performer with a mAP@0.5 of \VAR{best_performer.map_0_5|format_number}, while showing competitive performance across all evaluation metrics. The class-wise analysis reveals opportunities for targeted improvements and potential ensemble approaches.
+
+\vspace{1cm}
+\noindent\textit{Report generated by Object Detection Benchmark System v0.1.0 on \VAR{generation_time}}
+
+\end{document} 

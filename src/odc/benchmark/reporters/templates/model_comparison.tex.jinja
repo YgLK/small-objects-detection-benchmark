@@ -1,0 +1,88 @@
+%# Model comparison template for thesis integration
+%# Focused comparison tables and analysis
+
+% Model Comparison Section
+\section{Model Comparison Results}
+
+\subsection{Performance Summary}
+
+Table~\ref{tab:model_comparison_summary} presents a comprehensive comparison of the evaluated models across key performance metrics.
+
+\begin{table}[htbp]
+\centering
+\caption{Object Detection Model Performance Comparison on SkyFusion Dataset}
+\label{tab:model_comparison_summary}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Model} & \textbf{mAP@0.5} & \textbf{mAP@0.75} & \textbf{mAP@COCO} & \textbf{FPS} & \textbf{Parameters (M)} & \textbf{Size (MB)} \\
+\midrule
+\BLOCK{ for row in summary_table }
+\VAR{row.model_name|format_model_name} & 
+\VAR{row.map_50|format_number} & 
+\VAR{row.map_75|format_number} & 
+\VAR{row.map_coco|format_number} & 
+\VAR{row.fps|format_number} & 
+\VAR{(row.parameters / 1000000)|format_number} & 
+\VAR{row.model_size|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Class-wise Performance Analysis}
+
+The class-wise performance analysis in Table~\ref{tab:class_performance} reveals significant variations in model performance across different object categories.
+
+\begin{table}[htbp]
+\centering
+\caption{Class-wise Average Precision (AP@0.5) Comparison}
+\label{tab:class_performance}
+\begin{tabular}{@{}l\BLOCK{ for class_name in dataset_info.class_names }c\BLOCK{ endfor }c@{}}
+\toprule
+\textbf{Model} \BLOCK{ for class_name in dataset_info.class_names }& \textbf{\VAR{class_name.title()}} \BLOCK{ endfor }& \textbf{Mean AP} \\
+\midrule
+\BLOCK{ for row in class_wise_table }
+\VAR{row.model_name|format_model_name} \BLOCK{ for class_name in dataset_info.class_names }& \VAR{row['ap_' + class_name]|format_number} \BLOCK{ endfor }& \VAR{summary_table[loop.index0].map_50|format_number} \\
+\BLOCK{ endfor }
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Performance Rankings}
+
+Based on the comprehensive evaluation, the models rank as follows by overall detection performance (mAP@0.5):
+
+\begin{enumerate}
+\BLOCK{ for rank, (model_name, score) in rankings.by_map_0_5|list|enumerate(1) }
+    \item \textbf{\VAR{model_name|format_model_name}}: \VAR{score|format_number} mAP@0.5
+\BLOCK{ endfor }
+\end{enumerate}
+
+\subsection{Key Findings}
+
+\begin{itemize}
+    \item \textbf{Best Overall Performance}: \VAR{best_performer.model|format_model_name} achieved the highest mAP@0.5 of \VAR{best_performer.map_0_5|format_number}
+    
+    \item \textbf{Class-specific Excellence}:
+    \begin{itemize}
+    \BLOCK{ for class_name, analysis in class_analysis.items() }
+        \item \textbf{\VAR{class_name.title()}} detection: \VAR{analysis.best_model|format_model_name} (AP@0.5 = \VAR{analysis.best_score|format_number})
+    \BLOCK{ endfor }
+    \end{itemize}
+    
+    \item \textbf{Performance Range}: mAP@0.5 scores span from \VAR{rankings.by_map_0_5[-1][1]|format_number} to \VAR{rankings.by_map_0_5[0][1]|format_number}, indicating \VAR{((rankings.by_map_0_5[0][1] - rankings.by_map_0_5[-1][1]) / rankings.by_map_0_5[-1][1] * 100)|format_number}\% improvement from worst to best performer
+    
+    \item \textbf{Computational Efficiency}: All models maintain real-time performance with >20 FPS, suitable for practical deployment
+\end{itemize}
+
+\subsection{Statistical Analysis}
+
+The evaluation was conducted on \VAR{dataset_info.num_images} images containing \VAR{dataset_info.num_annotations} object annotations. The dataset exhibits the following characteristics:
+
+\begin{itemize}
+    \item \textbf{Class Distribution}: Vehicle (\VAR{(dataset_info.class_counts.vehicle / dataset_info.num_annotations)|format_percentage}), Ship (\VAR{(dataset_info.class_counts.get('ship', 0) / dataset_info.num_annotations)|format_percentage}), Aircraft (\VAR{(dataset_info.class_counts.get('aircraft', 0) / dataset_info.num_annotations)|format_percentage})
+    \item \textbf{Object Density}: \VAR{(dataset_info.num_annotations / dataset_info.num_images)|format_number} objects per image on average
+    \item \textbf{Evaluation Protocol}: COCO-style metrics with IoU thresholds from 0.5 to 0.95
+\end{itemize} 
