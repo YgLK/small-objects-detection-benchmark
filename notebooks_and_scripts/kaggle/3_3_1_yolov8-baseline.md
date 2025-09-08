@@ -83,7 +83,7 @@ Quickly benchmark YOLOv8 sizes (n, s, m, l, x).
 
 Dataset has ~3,000 images (a small to moderate size).
 
-Identify the best size–performance trade-off.
+Identify the best size-performance trade-off.
 
 **Recommendation:** <br>
 Run the baseline for 5 epochs initially:

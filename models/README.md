@@ -4,19 +4,40 @@
 ---
 This folder contains trained detectors used in the small objects detection benchmark trained on the [SkyFusion dataset](https://www.kaggle.com/datasets/kailaspsudheer/tiny-object-detection). These files are intended for use in Kaggle notebooks or locally. On Kaggle, place the files in your working directory or reference them from your Dataset path (e.g., `/kaggle/input/small-objects-detection-benchmark/models/<model-name>.pt`).
 
-## Available Models (self-contained thresholds)
+## Final models
 
-| Name                         | Type         | File                                       | Framework                         | Optimal params                                                                 |
-|-----------------------------|--------------|--------------------------------------------|-----------------------------------|---------------------------------------------------------------------------------|
-| yolov8m-aug-update_20250603 | yolo         | yolov8m-aug-update_20250603.pt             | Ultralytics (YOLOv8)              | conf_thr=0.06291186979342091, nms_iou=0.3358295483691517                        |
-| yolov11m-p2-aug_20250603    | yolo         | yolov11m-p2-aug_20250603.pt                | Ultralytics (YOLOv11)             | conf_thr=0.052566007120515956, nms_iou=0.49317179138811856                      |
-| rf-detr                     | rfdetr       | rfdetr_best_total.pth                      | PyTorch (RF-DETR impl)            | conf_thr=0.09616820140192325                                                    |
-| faster-rcnn                 | faster-rcnn  | fasterrcnn-best-epoch=18-val_map=0.31.ckpt | PyTorch Lightning + torchvision   | conf_thr=0.07957236023833904, nms_iou=0.621230971215935                         |
-| rt-detr                     | rtdetr       | rtdetr-aug_best.pt                          | Ultralytics (RT-DETR)             | conf_thr=0.2704984199324548                                                     |
+| Name                         | Benchmark label                    | Type         | File                                       | Framework                         | Optimal params                                                                 |
+|-----------------------------|------------------------------------|--------------|--------------------------------------------|-----------------------------------|---------------------------------------------------------------------------------|
+| yolov8m-aug-update_20250603 | YOLOv8m (Optimized Aug, CosLR)     | yolo         | yolov8m-aug-update_20250603.pt             | Ultralytics (YOLOv8)              | conf_thr=0.06291186979342091, nms_iou=0.3358295483691517                        |
+| yolov11m-aug_20250603       | YOLOv11m (Optimized Aug)           | yolo         | yolov11m-aug_20250603.pt                   | Ultralytics (YOLOv11)             | N/A                                                                            |
+| yolov11m-p2-aug_20250603    | YOLOv11m (P2, Optimized Aug)       | yolo         | yolov11m-p2-aug_20250603.pt                | Ultralytics (YOLOv11)             | conf_thr=0.052566007120515956, nms_iou=0.49317179138811856                      |
+| rf-detr                     | RF-DETR                             | rfdetr       | rfdetr_best_total.pth                      | PyTorch (RF-DETR impl)            | conf_thr=0.09616820140192325                                                    |
+| faster-rcnn                 | Faster R-CNN                        | faster-rcnn  | fasterrcnn-best-epoch=18-val_map=0.31.ckpt | PyTorch Lightning + torchvision   | conf_thr=0.07957236023833904, nms_iou=0.621230971215935                         |
+| rt-detr                     | RT-DETR-L                           | rtdetr       | rtdetr-aug_best.pt                          | Ultralytics (RT-DETR)             | conf_thr=0.2704984199324548                                                     |
 
 Notes:
 - The table includes the exact optimal thresholds; you don’t need an external YAML file.
 - If a model doesn’t list `nms_iou`, use the framework’s default or your benchmark’s setting.
+
+---
+
+## YOLO training progression (changes and artifacts)
+
+This table summarizes the step-by-step progression used in experiments and links steps to any published artifacts.
+
+| Step | Progression ID            | Key change                 | Artifact file                          | Benchmark label                    |
+|------|---------------------------|----------------------------|----------------------------------------|------------------------------------|
+| 1    | Baseline Testing          | Size sweep                 | —                                      | —                                  |
+| 2    | yolov8m-baseline          | Standard training          | yolov8m-baseline_20250518.pt           | YOLOv8m (Baseline)                 |
+| 3    | yolov8m-baseline-aug      | Add augmentation           | yolov8m-baseline-aug_20250518.pt       | YOLOv8m (Aug)                      |
+| 4    | yolov8m-cos-lr            | Cosine learning rate       | yolov8m-aug-100epochs-cos-lr_20250518.pt | YOLOv8m (Aug, CosLR)            |
+| 5    | yolov8m-ships-vehicles    | Exclude aircraft (failed)  | yolov8m-aug-100epochs-ships-vehicles_20250518.pt | —                         |
+| 6    | yolov8m-aug-update        | Optimize augmentations     | yolov8m-aug-update_20250603.pt         | YOLOv8m (Optimized Aug, CosLR)     |
+| 7    | yolov11m-aug              | Try YOLOv11                | yolov11m-aug_20250603.pt               | YOLOv11m (Optimized Aug)           |
+| 8    | yolov11m-p2-aug           | Add P2 enhancement         | yolov11m-p2-aug_20250603.pt            | YOLOv11m (P2, Optimized Aug)       |
+
+Notes:
+- “Benchmark label” matches how models are referred to in result tables.
 
 ---
 
