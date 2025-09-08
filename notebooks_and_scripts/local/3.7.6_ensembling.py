@@ -310,7 +310,7 @@ def main():
         json.dump(gt_coco_data, f, indent=4)
     gt_coco = COCO(str(gt_path))
 
-    # For dev mode, we run predictions on a subset of the data.
+    # For dev mode, run predictions on a subset of the data.
     dataset = all_samples[:10] if RUN_FAST_DEV else all_samples
     if RUN_FAST_DEV:
         log_func(f"Using {len(dataset)} images for predictions.")

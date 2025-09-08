@@ -165,7 +165,7 @@ class SkyFusionDataset(ObjectDetectionDataset):
         # Load annotations
         annotations = self._load_annotations(label_path, img_width, img_height)
         if annotations is None:
-            # This indicates an invalid annotation was found and we should skip this sample.
+            # This indicates an invalid annotation was found and should skip this sample.
             return None
 
         # Create image ID from filename

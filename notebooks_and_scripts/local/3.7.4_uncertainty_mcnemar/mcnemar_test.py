@@ -128,7 +128,7 @@ def main():
     matches_a = get_object_level_matches(coco_gt, coco_dt_a, args.iou_thr)
     matches_b = get_object_level_matches(coco_gt, coco_dt_b, args.iou_thr)
 
-    # Ensure we have the same GT objects
+    # Ensure the same GT objects
     all_gt_ids = set(matches_a.keys()) | set(matches_b.keys())
 
     # Count discordant pairs

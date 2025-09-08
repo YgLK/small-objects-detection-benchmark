@@ -181,7 +181,7 @@ class BenchmarkResults(BaseModel):
 
     @validator("model_results")
     def validate_model_results(cls, v):
-        """Validate that we have at least one model result."""
+        """Validate that the list of model results is not empty."""
         if not v:
             raise ValueError("At least one model result is required")
         return v

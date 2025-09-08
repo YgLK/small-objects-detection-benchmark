@@ -130,7 +130,7 @@ class ResultsDatabase:
         config_hash = None
         try:
             # This could be extended to hash model configuration
-            # For now, we use file content hash for small files or just metadata
+            # For now, use file content hash for small files or just metadata
             if stat.st_size < 1024 * 1024:  # 1MB threshold
                 with open(model_path, "rb") as f:
                     content = f.read()

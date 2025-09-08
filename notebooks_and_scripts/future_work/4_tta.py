@@ -26,8 +26,6 @@ from src.odc.benchmark import (
 
 
 # --- Configuration ---
-
-# Per PROMPT.md, focus on the top 2 models
 MODELS_CONFIG = [
     {
         "name": "yolov11m-p2-aug_20250603",
@@ -54,7 +52,6 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 RUN_FAST_DEV = False  # Set to True to run on a small subset of data
 
 # --- TTA Augmentations ---
-# From PROMPT.md: horizontal flip, and one of brightness/contrast/color with mild intensity
 TTA_TRANSFORMS = {
     "hflip": A.HorizontalFlip(p=1.0),
     "brightness": A.RandomBrightnessContrast(brightness_limit=0.1, contrast_limit=0.1, p=1.0),
@@ -166,7 +163,7 @@ def merge_predictions(all_predictions, nms_iou_threshold=0.5):
     # Assuming single class, so all labels are 0
     labels = torch.tensor([0 for _ in all_predictions])
 
-    # Use torchvision's batched NMS. Since we have one class, it's equivalent to standard NMS.
+    # Use torchvision's batched NMS. Since there's only one class, it's equivalent to standard NMS.
     # Note: torchvision.ops.nms is for single-class NMS.
     keep_indices = torch.ops.torchvision.nms(boxes, scores, nms_iou_threshold)
 

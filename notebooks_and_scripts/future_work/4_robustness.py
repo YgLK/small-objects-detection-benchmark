@@ -23,8 +23,6 @@ from src.odc.benchmark import (
 
 
 # --- Configuration ---
-
-# Per PROMPT.md, focus on the top 2 models
 MODELS_CONFIG = [
     {
         "name": "yolov11m-p2-aug_20250603",

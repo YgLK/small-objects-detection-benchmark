@@ -28,7 +28,7 @@ from tqdm import tqdm
 import yaml
 
 
-# Ensure we can import project src modules
+# Ensure script can import project src modules
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 

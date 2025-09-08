@@ -137,7 +137,7 @@ class UltralyticsModel(ObjectDetectionModel):
     def predict_batch(self, images: list[np.ndarray]) -> list[list[Detection]]:
         """Perform inference on a batch of images.
 
-        Ultralytics models support batch processing, so we override the default implementation.
+        Ultralytics models support batch processing, so this implementation overrides the default behavior to leverage that capability.
 
         Args:
             images: List of input images as numpy arrays
