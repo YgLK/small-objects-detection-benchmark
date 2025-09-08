@@ -2,10 +2,10 @@
 """
 Generate a portrait comparison grid for spatial-density buckets (sparse, medium, dense).
 
-Layout: 3 columns (sparse, medium, dense) × 3 rows (Ground Truth, Model A, Model B).
+Layout: 3 columns (sparse, medium, dense) x 3 rows (Ground Truth, Model A, Model B).
 
-For each bucket, pick one representative 640×640 image from the test split.
-Row 1 overlays ground-truth boxes. Rows 2–3 show predictions from two selected
+For each bucket, pick one representative 640x640 image from the test split.
+Row 1 overlays ground-truth boxes. Rows 2-3 show predictions from two selected
 evaluation models (configurable via --models).
 
 Output: PNG saved under output/spatial-density/visualizations/density_model_comparison_grid.png
@@ -43,8 +43,8 @@ from src.odc.benchmark.visualization.detection_visualizer import DetectionVisual
 
 # Density bins (inclusive lower, exclusive upper bound)
 DENSITY_BINS: dict[str, tuple[int, float]] = {
-    "sparse": (0, 10),  # 0–9 objects
-    "medium": (10, 30),  # 10–29 objects
+    "sparse": (0, 10),  # 0-9 objects
+    "medium": (10, 30),  # 10-29 objects
     "dense": (30, float("inf")),  # ≥30 objects
 }
 
@@ -141,7 +141,7 @@ def find_one_sample_per_bin(dataset: SkyFusionDataset, rng: np.random.RandomStat
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate portrait density comparison grid (GT, Models) × (sparse, medium, dense)"
+        description="Generate portrait density comparison grid (GT, Models) x (sparse, medium, dense)"
     )
     parser.add_argument("--dataset", default="datasets/SkyFusion_yolo", help="Path to dataset root")
     parser.add_argument("--split", default="test", choices=["train", "val", "valid", "test"], help="Dataset split")

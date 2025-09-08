@@ -90,7 +90,7 @@ The SkyFusion dataset {split_description} high-resolution satellite or aerial im
 
 - **Total Images**: {self._format_number(total_images)}
 - **Total Objects**: {self._format_number(total_objects)}
-- **Image Size**: {img_size[0]}×{img_size[1]} pixels (consistent across all images)
+- **Image Size**: {img_size[0]}x{img_size[1]} pixels (consistent across all images)
 - **Object Density**: Average of {avg_objects_per_image:.2f} objects per image (median: {median_val})
 - **Max Objects**: {self._format_number(max_objects)} objects in a single image
 - **Empty Images**: {self._format_number(empty_images)} ({empty_images / total_images * 100:.2f}% of total)

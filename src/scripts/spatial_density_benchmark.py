@@ -2,9 +2,9 @@
 Benchmark script for spatial density analysis.
 
 This script evaluates object detection models on different spatial density levels:
-- Sparse: < 10 objects per 640×640 patch
-- Medium: 10-30 objects per 640×640 patch
-- Dense: > 30 objects per 640×640 patch
+- Sparse: < 10 objects per 640x640 patch
+- Medium: 10-30 objects per 640x640 patch
+- Dense: > 30 objects per 640x640 patch
 
 Outputs:
 - Plots saved in the ./output/spatial-density/ dir

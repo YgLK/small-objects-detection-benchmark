@@ -3,8 +3,8 @@
 Count images per spatial-density bucket from a COCO dataset.
 
 Density bins (matching evaluation script):
-- sparse: 0–9 objects per 640×640 image
-- medium: 10–29
+- sparse: 0-9 objects per 640x640 image
+- medium: 10-29
 - dense: 30+
 
 Usage examples:
@@ -31,8 +31,8 @@ import zipfile
 
 # Canonical density bins (inclusive lower, exclusive upper for upper bounds)
 DENSITY_BINS: dict[str, tuple[int, float]] = {
-    "sparse": (0, 10),  # 0–9
-    "medium": (10, 30),  # 10–29
+    "sparse": (0, 10),  # 0-9
+    "medium": (10, 30),  # 10-29
     "dense": (30, float("inf")),  # 30+
 }
 
@@ -118,8 +118,8 @@ def format_summary(name: str, bin_counts: Counter, total: int) -> str:
     return (
         f"Split: {name}\n"
         f"  Total images: {total}\n"
-        f"  sparse (0–9):  {bin_counts['sparse']:>5}  ({pct(bin_counts['sparse'])})\n"
-        f"  medium (10–29):{bin_counts['medium']:>5}  ({pct(bin_counts['medium'])})\n"
+        f"  sparse (0-9):  {bin_counts['sparse']:>5}  ({pct(bin_counts['sparse'])})\n"
+        f"  medium (10-29):{bin_counts['medium']:>5}  ({pct(bin_counts['medium'])})\n"
         f"  dense (≥30):   {bin_counts['dense']:>5}  ({pct(bin_counts['dense'])})\n"
     )
 
