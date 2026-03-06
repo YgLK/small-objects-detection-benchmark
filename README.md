@@ -279,8 +279,7 @@ In TIDE, **FP** and **FN** are **not raw counts**. They are **dAP values** showi
 - **FP (False Positive):** measures how much AP is lost because the detector produces invalid detections, such as background predictions, duplicate detections, or some wrong-class / badly localized predictions.
 - **FN (False Negative):** measures how much AP is lost because real ground-truth objects do not receive a valid matching detection.
 
-<details>
-<summary><strong>How TIDE computes FP and FN contributions</strong></summary>
+#### How TIDE computes FP and FN contributions
 
 TIDE computes each contribution as:
 
@@ -292,7 +291,9 @@ where $AP$ is the original AP and $AP_o$ is the AP after applying oracle $o$.
   $$\Delta AP_{FP} = AP(\text{all false positives removed}) - AP$$
 
 - For **FN**, TIDE adjusts the recall denominator so recall becomes perfect without changing precision:
-  $$\Delta AP_{FN} = AP(N'_{GT} = TP_{final}) - AP$$
+
+$$\Delta AP_{FN} = AP(N^{\prime}_{GT} = TP_{final}) - AP$$
+
 
 So:
 
@@ -301,7 +302,6 @@ So:
 
 Because TIDE uses separate oracle analyses, **FP vs FN is not just a sum of the main TIDE error categories**.
 
-</details> 
 <br>
 
 
