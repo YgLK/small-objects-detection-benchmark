@@ -253,11 +253,57 @@ small-objects-detection-benchmark/
 
 ### Object Density Performance Comparison
 
+Images were categorized into three buckets based on the number of ground-truth objects they contain:
+- **Sparse:** 0–9 objects
+- **Medium:** 10–29 objects
+- **Dense:** 30+ objects
+
 <p align="center">
   <img src="docs/assets/density_map_comparison.png" alt="mAP@0.5 by spatial density" width="85%"/>
 </p>
 
 ### TIDE Error Decomposition
+
+TIDE decomposes object detection errors into six categories to show how much AP is lost to each error type:
+- **Cls (Classification):** The detector finds the object with sufficient overlap, but predicts the wrong class.
+- **Loc (Localization):** The detector predicts the correct class, but the bounding box is not well aligned with the ground-truth object.
+- **Both:** The detection has both an incorrect class and poor localization.
+- **Dupe (Duplicate):** The detector produces multiple detections for the same ground-truth object; only one can be matched correctly, and the others count as duplicate errors.
+- **Bkg (Background):** The detector predicts an object where there is no matching ground-truth object, i.e. a background false positive.
+- **Miss:** The detector fails to produce a valid detection for a ground-truth object, i.e. a false negative.
+
+### FP vs FN
+
+In TIDE, **FP** and **FN** are **not raw counts**. They are **dAP values** showing how much Average Precision (AP) would improve under two separate oracle analyses.
+
+- **FP (False Positive):** measures how much AP is lost because the detector produces invalid detections, such as background predictions, duplicate detections, or some wrong-class / badly localized predictions.
+- **FN (False Negative):** measures how much AP is lost because real ground-truth objects do not receive a valid matching detection.
+
+<details>
+<summary><strong>How TIDE computes FP and FN contributions</strong></summary>
+
+TIDE computes each contribution as:
+
+$$\Delta AP_o = AP_o - AP$$
+
+where $AP$ is the original AP and $AP_o$ is the AP after applying oracle $o$.
+
+- For **FP**, TIDE removes all false positives and recomputes AP:
+  $$\Delta AP_{FP} = AP(\text{all false positives removed}) - AP$$
+
+- For **FN**, TIDE adjusts the recall denominator so recall becomes perfect without changing precision:
+  $$\Delta AP_{FN} = AP(N'_{GT} = TP_{final}) - AP$$
+
+So:
+
+- **FP dAP** = AP loss caused by bad extra detections
+- **FN dAP** = AP loss caused by missing valid detections for real objects
+
+Because TIDE uses separate oracle analyses, **FP vs FN is not just a sum of the main TIDE error categories**.
+
+</details> 
+<br>
+
 
 <p align="center">
   <img src="docs/assets/tide_error_collage.png" alt="TIDE error analysis collage" width="70%"/>
