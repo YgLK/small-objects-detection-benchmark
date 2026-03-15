@@ -11,7 +11,9 @@
 - **Best baseline mAP@0.5:** RT-DETR-L `0.599`.
 - **Best tiny-object behavior:** YOLOv11m-P2 (highest tiny-object AP and recall among all models).
 - **Post-threshold tuning:** YOLOv11m-P2 reaches `0.693` mAP@0.5 (+23.1% via Optuna).
+<!--
 - **Statistical result:** Aggregate mAP parity vs RT-DETR-L (bootstrap ΔCI crosses zero), but YOLOv11m-P2 has ~+1.9% object-level recall advantage (McNemar, p=2.21e-4).
+-->
 
 ---
 
@@ -38,8 +40,9 @@ Vehicles dominate (76.7% of objects), ships are rare (3.4%), and aircraft sit in
 2. **Iterative YOLO training pipeline** — progressive improvements from baseline YOLOv8m through augmentation, cosine LR, optimized augmentation, YOLOv11 upgrade, and P2 head addition.
 3. **Threshold optimization** — Optuna-based per-model tuning of `conf_thr` and `nms_iou` on the validation split.
 4. **Extended analysis scripts** — size-bin evaluation, spatial-density evaluation, TIDE error decomposition, WBF ensembling, and inference-time tiling.
+<!--
 5. **Statistical significance testing** — paired bootstrap CIs (B=1000) and McNemar's test for object-level recall comparison.
-
+-->
 ---
 
 ## Benchmark Setup (Fair-Comparison Protocol)
@@ -108,7 +111,7 @@ All models were evaluated on the identical test split with identical metric comp
 - **WBF ensemble:** Gave modest overall gain (+0.6% mAP@[0.5:0.95]) but better small-object gain (+2.8% AP_S). Not enough to justify 2× inference cost without further tuning.
 
 ---
-
+<!--
 ## Statistical Confidence (Bootstrap + McNemar)
 
 ### Paired Bootstrap (B=1000, 95% CI)
@@ -137,6 +140,7 @@ All models were evaluated on the identical test split with identical metric comp
 **Interpretation:** Aggregate mAP is statistically tied; at the object level, YOLOv11m-P2 detects ~1.9% more ground-truth objects — a modest but statistically significant recall advantage.
 
 ---
+-->
 
 ## Reproducibility / How to Run
 
@@ -234,9 +238,10 @@ small-objects-detection-benchmark/
 2. **Latency/accuracy/parameter trade-offs:** YOLOv11m-P2 delivers near-DETR accuracy at 61 ms (vs 87–95 ms) with 20.5M params (vs 32–93M). For edge deployment, this matters.
 3. **Why threshold optimization materially changed ranking:** Default conf=0.25 penalizes models with different confidence distributions. Optuna tuning on validation shifted YOLOv11m-P2 from 3rd to 1st on mAP@0.5 — showing that "out-of-the-box" rankings can be misleading.
 4. **Why failed tiling matters:** Tiling magnifies content by ~1.25×, creating a train-infer scale mismatch. Models trained on 640×640 don't generalize to upscaled 512→640 tiles. This is a practical lesson for production aerial detection pipelines.
-5. **Why both aggregate and object-level significance were reported:** Bootstrap Δ-CIs test *ranking stability* of aggregate mAP; McNemar's tests whether the models *detect different objects*. Together they reveal that the models are tied on the metric but not interchangeable per object.
-6. **Productionization next steps:** Integrate tiling with tile-aware training, apply Optuna jointly with WBF ensemble weights, deploy with TensorRT/ONNX quantization, and add active-learning feedback for rare-class samples.
-
+5. **Productionization next steps:** Integrate tiling with tile-aware training, apply Optuna jointly with WBF ensemble weights, deploy with TensorRT/ONNX quantization, and add active-learning feedback for rare-class samples.
+<!--
+6. **Why both aggregate and object-level significance were reported:** Bootstrap Δ-CIs test *ranking stability* of aggregate mAP; McNemar's tests whether the models *detect different objects*. Together they reveal that the models are tied on the metric but not interchangeable per object.
+-->
 ---
 
 ## Limitations and Future Work
